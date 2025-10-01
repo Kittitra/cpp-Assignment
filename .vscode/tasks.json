@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build C++ Project",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "Fmenu.cpp",
+                "checkLogin.cpp",
+                "-o",
+                "program.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}
