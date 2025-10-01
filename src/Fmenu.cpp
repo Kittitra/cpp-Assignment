@@ -3,6 +3,7 @@
 #include <string>
 #include <iomanip>
 #include <time.h>
+#include <limits>
 #include "checkLogin.h"
 
 using namespace std;
@@ -31,26 +32,39 @@ int main() {
 }
 
 int Login() {
-    string filename = "data/accounts.txt";
+    string filename = "../data/accounts.txt";
     string username, password;
 
-    system("cls");
-    cout << "Log In: " << endl;
-    cout << "Username: ";
-    cin >> username;
-    cout << "Password: ";
-    cin >> password;
+    while (true) {
+        system("cls");
+        cout << "Log In (enter 0 to return to menu): " << endl;
 
-    if (checkLogin(filename, username, password)) {
-        cout << "Login success\n";
-    } else {
-        cout << "Login fail\n";
+        cout << "Username: ";
+        cin >> username;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ล้าง buffer
+
+        if (username == "0") {
+            cout << "Returning to menu...\n";
+            cout << "Press Enter to continue...";
+            cin.get();
+            break; // กลับไปเมนู
+        }
+
+        cout << "Password: ";
+        cin >> password;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ล้าง buffer
+
+        if (checkLogin(filename, username, password)) {
+            cout << "Login success!\n";
+            cout << "Press Enter to continue...";
+            cin.get();
+            break; // login ถูก → กลับเมนู
+        } else {
+            cout << "Login fail! Please try again.\n";
+            cout << "Press Enter to retry...";
+            cin.get();   // รอ Enter
+        }
     }
-
-    // รอผู้ใช้กด Enter ก่อนกลับไปเมนู
-    cout << "Press Enter to continue...";
-    cin.ignore(); // ล้าง buffer ของ cin (เพราะก่อนหน้านี้ใช้ >>)
-    cin.get();    // รอ Enter
 
     return 0;
 }
