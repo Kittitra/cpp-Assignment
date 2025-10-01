@@ -1,34 +1,20 @@
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <iomanip>
-#include <time.h>
 #include <limits>
-#include "checkLogin.h"
-
+#include <cstdlib>
+#include "../include/checkLogin.h"
+#include "../include/manageProducts.h"
 using namespace std;
 
-int Menu(); 
-int Login();
-
-int main() {
-    int c;
-
-    do
-    {
-        system("cls");
-        c = Menu();
-
-        switch (c) // ใช้ switch เลือก menu
-        {
-        case 1:
-            Login();
-            break;
-        }
-    } while (c != 0); // หากใส่ 0 loop จะหยุดทำงาน
-    cout << "exit program." << endl;
-
-    return 0;
+void showAdminMenu() {
+    system("cls");
+    cout << "=== Admin Menu ===\n";
+    cout << "1. Manage Product Categories\n";
+    cout << "2. Manage Products\n";
+    cout << "3. Stock Movements\n";
+    cout << "4. Sales\n";
+    cout << "5. Reports\n";
+    cout << "0. Logout / Return to Main Menu\n";
+    cout << "==================\n";
 }
 
 int Login() {
@@ -37,48 +23,79 @@ int Login() {
 
     while (true) {
         system("cls");
-        cout << "Log In (enter 0 to return to menu): " << endl;
+        cout << "Log In (enter 0 to return to main menu):\n";
 
         cout << "Username: ";
         cin >> username;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ล้าง buffer
-
-        if (username == "0") {
-            cout << "Returning to menu...\n";
-            cout << "Press Enter to continue...";
-            cin.get();
-            break; // กลับไปเมนู
-        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        if (username == "0") break;
 
         cout << "Password: ";
         cin >> password;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ล้าง buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        if (checkLogin(filename, username, password)) {
-            cout << "Login success!\n";
+        Account acc = checkLogin(filename, username, password);
+
+        if (acc.username != "") {
+            cout << "Login successful! Role: " << acc.role << endl;
             cout << "Press Enter to continue...";
             cin.get();
-            break; // login ถูก → กลับเมนู
+
+            // If role is admin, show admin menu
+            if (acc.role == "admin") {
+                int choice;
+                do {
+                    showAdminMenu();
+                    cout << "Choose option: ";
+                    cin >> choice;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                    switch(choice) {
+                        case 1: cout << "Selected: Manage Product Categories\n"; break;
+                        case 2: cout << "Selected: Manage Products\n"; 
+                            manageProductsMenu();
+                        break;
+                        case 3: cout << "Selected: Stock Movements\n"; break;
+                        case 4: cout << "Selected: Sales\n"; break;
+                        case 5: cout << "Selected: Reports\n"; break;
+                        case 0: cout << "Logging out...\n"; break;
+                        default: cout << "Invalid option\n";
+                    }
+
+                    if (choice != 0) {
+                        cout << "Press Enter to continue...";
+                        cin.get();
+                    }
+                } while(choice != 0);
+            }
+
+            break; // exit login loop
         } else {
-            cout << "Login fail! Please try again.\n";
-            cout << "Press Enter to retry...";
-            cin.get();   // รอ Enter
+            cout << "Login failed! Press Enter to retry...";
+            cin.get();
         }
     }
 
     return 0;
 }
 
-int Menu() { // แสดงหน้าจอเมนูที่มีสามตัวเลือกออกมา 
-    string line(30, '=');
-    int choose;
-    cout << line << endl;
-    cout << "         Main Menu            :\n";
-    cout << line << endl;
-    cout << ":        0 _ exit             :\n";
-    cout << ":        1 _ Login            :\n";
-    cout << line << endl;
-    cout << "choose menu : ";
-    cin >> choose;
-    return (choose); //ส่งค่ากลับไปหา switchcase ที่ main
+int main() {
+    int c;
+    do {
+        system("cls");
+        cout << "=== Main Menu ===\n";
+        cout << "1. Login\n";
+        cout << "0. Exit\n";
+        cout << "Choose option: ";
+        cin >> c;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        switch(c) {
+            case 1: Login(); break;
+            case 0: cout << "Exiting program...\n"; break;
+            default: cout << "Invalid option\n";
+        }
+    } while(c != 0);
+
+    return 0;
 }
