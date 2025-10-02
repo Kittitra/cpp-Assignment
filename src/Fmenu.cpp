@@ -2,9 +2,10 @@
 #include <limits>
 #include <cstdlib>
 #include "../include/checkLogin.h"
-#include "../include/manageProducts.h"
-#include "../include/checkLogin.h"
 #include "../include/logHistory.h"
+#include "../include/manageProducts.h"
+#include "../include/manageItems.h"
+
 using namespace std;
 
 void showAdminMenu() {
@@ -53,11 +54,15 @@ int Login() {
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                     switch(choice) {
-                        case 1: cout << "Selected: Manage Product Categories\n"; break;
-                        case 2: cout << "Selected: Manage Products\n"; 
+                        case 1: cout << "Selected: Manage Product Categories\n"; 
                             manageProductsMenu();
                         break;
-                        case 3: cout << "Selected: Stock Movements\n"; break;
+                        case 2: cout << "Selected: Manage Products\n"; 
+                            manageItemsMenu();
+                        break;
+                        case 3: cout << "Selected: Stock Movements\n"; 
+                            
+                        break;
                         case 4: cout << "Selected: Sales\n"; break;
                         case 5: cout << "Selected: Reports\n"; break;
                         case 0: cout << "Logging out...\n"; break;

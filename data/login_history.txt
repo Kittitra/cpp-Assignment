@@ -1,3 +1,8 @@
 [2025-10-02 20:31:02] User: bob (Role: admin) logged in.
 [2025-10-02 20:33:48] User: anna (Role: staff) logged in.
 [2025-10-02 20:35:32] User: anna (Role: staff) logged in.
+[2025-10-02 20:54:26] User: bob (Role: admin) logged in.
+[2025-10-02 20:56:40] User: anna (Role: staff) logged in.
+[2025-10-02 21:20:04] User: bob (Role: admin) logged in.
+[2025-10-02 21:29:23] User: anna (Role: staff) logged in.
+[2025-10-02 21:45:07] User: bob (Role: admin) logged in.

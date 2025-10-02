@@ -1,0 +1,1 @@
+coke|drinks|7|10|10|box|25|Available
