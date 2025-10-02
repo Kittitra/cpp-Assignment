@@ -1,0 +1,3 @@
+[2025-10-02 20:31:02] User: bob (Role: admin) logged in.
+[2025-10-02 20:33:48] User: anna (Role: staff) logged in.
+[2025-10-02 20:35:32] User: anna (Role: staff) logged in.

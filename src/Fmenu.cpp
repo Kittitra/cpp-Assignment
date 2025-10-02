@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include "../include/checkLogin.h"
 #include "../include/manageProducts.h"
+#include "../include/checkLogin.h"
+#include "../include/logHistory.h"
 using namespace std;
 
 void showAdminMenu() {
@@ -38,11 +40,11 @@ int Login() {
 
         if (acc.username != "") {
             cout << "Login successful! Role: " << acc.role << endl;
+            logLogin(acc.username, acc.role);
             cout << "Press Enter to continue...";
             cin.get();
 
             // If role is admin, show admin menu
-            if (acc.role == "admin") {
                 int choice;
                 do {
                     showAdminMenu();
@@ -67,7 +69,6 @@ int Login() {
                         cin.get();
                     }
                 } while(choice != 0);
-            }
 
             break; // exit login loop
         } else {
@@ -75,7 +76,6 @@ int Login() {
             cin.get();
         }
     }
-
     return 0;
 }
 
