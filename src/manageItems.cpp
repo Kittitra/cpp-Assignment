@@ -4,37 +4,30 @@
 #include <string>
 #include <sstream>
 #include <limits>
-#include "../include/manageItems.h"
+#include <iomanip>
+#include "../include/manageProductMenu.h"
+#include "../include/product.h"
 using namespace std;
 
 const string PRODUCT_FILE = "../data/products.txt";
 
-struct Product {
-    string name;
-    string category;
-    double costPrice;
-    double sellPrice;
-    int quantity;
-    string unitName;
-    int unitSize;
-    string status; // "Available" or "Unavailable"
-};
-
-// แปลง product → string (บันทึกไฟล์)
+// ──────────────────────────────
+// Helper แปลง product ↔ string
+// ──────────────────────────────
 string productToString(const Product& p) {
     stringstream ss;
     ss << p.name << "|" 
        << p.category << "|" 
        << p.costPrice << "|" 
        << p.sellPrice << "|" 
-       << p.quantity << "|" 
-       << p.unitName << "|" 
+       << p.fullUnits << "|" 
        << p.unitSize << "|" 
+       << p.loosePieces << "|" 
+       << p.unitName << "|" 
        << p.status;
     return ss.str();
 }
 
-// แปลง string → product (อ่านจากไฟล์)
 Product stringToProduct(const string& line) {
     Product p;
     stringstream ss(line);
@@ -42,14 +35,17 @@ Product stringToProduct(const string& line) {
     getline(ss, p.category, '|');
     ss >> p.costPrice; ss.ignore();
     ss >> p.sellPrice; ss.ignore();
-    ss >> p.quantity; ss.ignore();
-    getline(ss, p.unitName, '|');
+    ss >> p.fullUnits; ss.ignore();
     ss >> p.unitSize; ss.ignore();
+    ss >> p.loosePieces; ss.ignore();
+    getline(ss, p.unitName, '|');
     getline(ss, p.status, '|');
     return p;
 }
 
-// โหลดสินค้าทั้งหมดจากไฟล์
+// ──────────────────────────────
+// โหลด/บันทึกสินค้า
+// ──────────────────────────────
 vector<Product> loadProducts() {
     vector<Product> products;
     ifstream infile(PRODUCT_FILE);
@@ -62,7 +58,6 @@ vector<Product> loadProducts() {
     return products;
 }
 
-// บันทึกสินค้าทั้งหมดลงไฟล์
 void saveProducts(const vector<Product>& products) {
     ofstream outfile(PRODUCT_FILE, ios::trunc);
     for (auto& p : products) {
@@ -70,28 +65,58 @@ void saveProducts(const vector<Product>& products) {
     }
 }
 
-// แสดงสินค้าทั้งหมด
+// ──────────────────────────────
+// แสดงสินค้า
+// ──────────────────────────────
 void showProducts() {
     vector<Product> products = loadProducts();
     cout << "\n=== Product List ===\n";
+
     if (products.empty()) {
         cout << "No products available.\n";
         return;
     }
+
+    // แสดงหัวตาราง
+    cout << left
+         << setw(5)  << "No"
+         << setw(20) << "Product"
+         << setw(15) << "Category"
+         << setw(10) << "Cost"
+         << setw(10) << "Sell"
+         << setw(12) << "Full Units"
+         << setw(12) << "Loose"
+         << setw(15) << "Unit Name"
+         << setw(10) << "Unit Size"
+         << setw(12) << "Total"
+         << setw(12) << "Status" << endl;
+
+    cout << string(123, '-') << endl;
+
+    // แสดงสินค้าแต่ละรายการ
     for (size_t i = 0; i < products.size(); i++) {
-        cout << i+1 << ". " << products[i].name 
-             << " | Category: " << products[i].category
-             << " | Cost: " << products[i].costPrice
-             << " | Sell: " << products[i].sellPrice
-             << " | Qty: " << products[i].quantity
-             << " " << products[i].unitName 
-             << "(x" << products[i].unitSize << ")"
-             << " | Status: " << products[i].status
+        int totalPieces = products[i].fullUnits * products[i].unitSize + products[i].loosePieces;
+
+        cout << left
+             << setw(5)  << (i+1)
+             << setw(20) << products[i].name
+             << setw(15) << products[i].category
+             << setw(10) << products[i].costPrice
+             << setw(10) << products[i].sellPrice
+             << setw(12) << products[i].fullUnits
+             << setw(12) << products[i].loosePieces
+             << setw(15) << products[i].unitName
+             << setw(10) << products[i].unitSize
+             << setw(12) << totalPieces
+             << setw(12) << products[i].status
              << endl;
     }
 }
 
+
+// ──────────────────────────────
 // เพิ่มสินค้า
+// ──────────────────────────────
 void addProduct() {
     Product p;
     int statusInput;
@@ -99,42 +124,27 @@ void addProduct() {
     cout << "Enter category: "; getline(cin, p.category);
     cout << "Enter cost price: "; cin >> p.costPrice;
     cout << "Enter sell price: "; cin >> p.sellPrice;
-    cout << "Enter quantity: "; cin >> p.quantity;
+    cout << "Enter number of full units: "; cin >> p.fullUnits;
+    cout << "Enter unit size (pieces per unit): "; cin >> p.unitSize;
+    p.loosePieces = 0; // เริ่มต้นยังไม่มีการแกะ
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cout << "Enter unit name (e.g. pack, box): "; getline(cin, p.unitName);
-    cout << "Enter unit size: "; cin >> p.unitSize;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cout << "Enter status (1 = Available, 0 = Unavailable): ";
     cin >> statusInput;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    if (statusInput == 1)
-        p.status = "Available";
-    else
-        p.status = "Unavailable";
+    p.status = (statusInput == 1) ? "Available" : "Unavailable";
 
-    ofstream outfile("../data/products.txt", ios::app);
-    if (outfile.is_open()) {
-        outfile << p.name << "," 
-                << p.category << "," 
-                << p.costPrice << "," 
-                << p.sellPrice << "," 
-                << p.quantity << "," 
-                << p.unitName << "," 
-                << p.status << "\n";
-        outfile.close();
-        cout << "Product saved successfully!\n";
-    } else {
-        cerr << "Error: cannot open products file.\n";
-    }
-
-    // vector<Product> products = loadProducts();
-    // products.push_back(p);
-    // saveProducts(products);
-    // cout << "Product added successfully.\n";
+    vector<Product> products = loadProducts();
+    products.push_back(p);
+    saveProducts(products);
+    cout << "Product added successfully.\n";
 }
 
+
+// ──────────────────────────────
 // แก้ไขสินค้า
+// ──────────────────────────────
 void editProduct() {
     vector<Product> products = loadProducts();
     if (products.empty()) {
@@ -155,8 +165,10 @@ void editProduct() {
     Product &p = products[index-1];
     cout << "Editing " << p.name << endl;
 
+    string temp;
+
     cout << "Enter new name (" << p.name << "): ";
-    string temp; getline(cin, temp);
+    getline(cin, temp);
     if (!temp.empty()) p.name = temp;
 
     cout << "Enter new category (" << p.category << "): ";
@@ -171,34 +183,37 @@ void editProduct() {
     getline(cin, temp);
     if (!temp.empty()) p.sellPrice = stod(temp);
 
-    cout << "Enter new quantity (" << p.quantity << "): ";
+    cout << "Enter new number of full units (" << p.fullUnits << "): ";
     getline(cin, temp);
-    if (!temp.empty()) p.quantity = stoi(temp);
+    if (!temp.empty()) p.fullUnits = stoi(temp);
+
+    cout << "Enter new loose pieces (" << p.loosePieces << "): ";
+    getline(cin, temp);
+    if (!temp.empty()) p.loosePieces = stoi(temp);
 
     cout << "Enter new unit name (" << p.unitName << "): ";
     getline(cin, temp);
     if (!temp.empty()) p.unitName = temp;
 
-    cout << "Enter new unit size (" << p.unitSize << "): ";
+    cout << "Enter new unit size (pieces per unit) (" << p.unitSize << "): ";
     getline(cin, temp);
     if (!temp.empty()) p.unitSize = stoi(temp);
 
     cout << "Enter new status (" << p.status << ") [1=Available, 0=Unavailable]: ";
     getline(cin, temp);
     if (!temp.empty()) {
-        if (temp == "1")
-            p.status = "Available";
-        else if (temp == "0")
-            p.status = "Unavailable";
-        else
-            cout << "Invalid input, keeping old status.\n";
+        if (temp == "1") p.status = "Available";
+        else if (temp == "0") p.status = "Unavailable";
     }
 
     saveProducts(products);
     cout << "Product updated successfully.\n";
 }
 
+
+// ──────────────────────────────
 // ลบสินค้า
+// ──────────────────────────────
 void deleteProduct() {
     vector<Product> products = loadProducts();
     if (products.empty()) {
@@ -222,8 +237,10 @@ void deleteProduct() {
     cout << "Product deleted successfully.\n";
 }
 
+// ──────────────────────────────
 // เมนูหลัก Manage Products
-void manageItemsMenu() {
+// ──────────────────────────────
+void manageProductsMenu() {
     int choice;
     do {
         system("cls");

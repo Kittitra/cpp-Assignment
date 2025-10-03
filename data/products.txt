@@ -1,1 +1,3 @@
-coke|drinks|7|10|10|box|25|Available
+bigRj|soda|5|10|11|12|7|pack|Available
+coke|soda|7|10|10|12|0|pack|Available
+mama|Uncategorized|0|0|20|7|0|box|Available

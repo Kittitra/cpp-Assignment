@@ -3,8 +3,9 @@
 #include <cstdlib>
 #include "../include/checkLogin.h"
 #include "../include/logHistory.h"
-#include "../include/manageProducts.h"
-#include "../include/manageItems.h"
+#include "../include/manageCategory.h"
+#include "../include/manageProductMenu.h"
+#include "../include/StockMovement.h"
 
 using namespace std;
 
@@ -55,13 +56,13 @@ int Login() {
 
                     switch(choice) {
                         case 1: cout << "Selected: Manage Product Categories\n"; 
-                            manageProductsMenu();
+                            manageCategory();
                         break;
                         case 2: cout << "Selected: Manage Products\n"; 
-                            manageItemsMenu();
+                            manageProductsMenu();
                         break;
                         case 3: cout << "Selected: Stock Movements\n"; 
-                            
+                            stockMovementMenu();
                         break;
                         case 4: cout << "Selected: Sales\n"; break;
                         case 5: cout << "Selected: Reports\n"; break;

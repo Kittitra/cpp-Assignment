@@ -3,7 +3,8 @@
 #include <vector>
 #include <string>
 #include <limits>
-#include "../include/manageProducts.h"
+#include "../include/manageCategory.h"
+#include "../include/manageProductMenu.h"
 
 using namespace std;
 
@@ -111,7 +112,7 @@ void deleteCategory() {
 }
 
 // เมนูย่อย Manage Products
-void manageProductsMenu() {
+void manageCategory() {
     int choice;
     do {
         system("cls");

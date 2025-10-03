@@ -1,0 +1,5 @@
+coke|IN|10|0|pack|12|none|2025-10-03
+bigRj|OUT|0|0|pack|5|none|2025-10-03
+bigRj|IN|2|0|pack|12|none|2025-10-03
+bigRj|OUT|0|5|pack|10|none|2025-10-03
+mama|IN|20|0|box|7|none|2025-10-03
