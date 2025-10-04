@@ -67,7 +67,9 @@ int Login() {
                         case 4: cout << "Selected: Sales\n"; 
                             salesMenu();
                         break;
-                        case 5: cout << "Selected: Reports\n"; break;
+                        case 5: cout << "Selected: Reports\n"; 
+                            reportMenu();
+                        break;
                         case 0: cout << "Logging out...\n"; break;
                         default: cout << "Invalid option\n";
                     }

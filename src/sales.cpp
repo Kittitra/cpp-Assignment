@@ -119,7 +119,7 @@ void salesMenu() {
     // รับเงินลูกค้า
     double cash;
     do {
-        cout << "\nTotal to pay: " << net << endl;
+        cout << "\nTotal to pay: " << fixed << setprecision(2) << net << endl;
         cout << "Enter cash: ";
         cin >> cash;
         if (cash < net) cout << "Not enough cash. Try again.\n";
@@ -130,9 +130,15 @@ void salesMenu() {
     // แสดงใบเสร็จ
     printReceipt(cart, total, tax, net, cash, change);
 
-    // บันทึกลง sales.txt
+    // ✅ ดึงวันที่ปัจจุบัน
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    char dateStr[20];
+    sprintf(dateStr, "%04d-%02d-%02d", 1900 + ltm->tm_year, 1 + ltm->tm_mon, ltm->tm_mday);
+
+    // ✅ บันทึกลง sales.txt พร้อมวันที่
     ofstream outfile(SALES_FILE, ios::app);
-    outfile << "Sale: ";
+    outfile << "[" << dateStr << "] Sale: ";
     for (auto &item : cart) {
         outfile << item.name << "x" << item.quantity << "@" << item.price << ",";
     }
@@ -140,5 +146,5 @@ void salesMenu() {
             << " Cash=" << cash << " Change=" << change << "\n";
     outfile.close();
 
-    cout << "Sale recorded successfully!\n";
+    cout << "\n Sale recorded successfully on " << dateStr << "!\n";
 }

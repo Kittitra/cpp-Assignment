@@ -9,6 +9,7 @@ void editProduct();
 void deleteProduct();
 void showProducts();
 void salesMenu();
+void reportMenu();
 
 // ฟังก์ชัน load/save product สำหรับใช้ใน StockMovement
 std::vector<Product> loadProducts();
