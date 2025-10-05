@@ -28,20 +28,40 @@ string productToString(const Product& p) {
     return ss.str();
 }
 
-Product stringToProduct(const string& line) {
+Product stringToProduct(const string &line) {
     Product p;
     stringstream ss(line);
+    string costStr, sellStr, fullStr, unitSizeStr, looseStr;
+
     getline(ss, p.name, '|');
     getline(ss, p.category, '|');
-    ss >> p.costPrice; ss.ignore();
-    ss >> p.sellPrice; ss.ignore();
-    ss >> p.fullUnits; ss.ignore();
-    ss >> p.unitSize; ss.ignore();
-    ss >> p.loosePieces; ss.ignore();
+    getline(ss, costStr, '|');
+    getline(ss, sellStr, '|');
+    getline(ss, fullStr, '|');
+    getline(ss, unitSizeStr, '|');
+    getline(ss, looseStr, '|');
     getline(ss, p.unitName, '|');
     getline(ss, p.status, '|');
+
+    // ✅ ปลอดภัย: ตรวจสอบก่อนแปลง
+    try { p.costPrice = stod(costStr); } 
+    catch (...) { p.costPrice = 0; }
+
+    try { p.sellPrice = stod(sellStr); } 
+    catch (...) { p.sellPrice = 0; }
+
+    try { p.fullUnits = stoi(fullStr); } 
+    catch (...) { p.fullUnits = 0; }
+
+    try { p.unitSize = stoi(unitSizeStr); } 
+    catch (...) { p.unitSize = 0; }
+
+    try { p.loosePieces = stoi(looseStr); } 
+    catch (...) { p.loosePieces = 0; }
+
     return p;
 }
+
 
 // ──────────────────────────────
 // โหลด/บันทึกสินค้า

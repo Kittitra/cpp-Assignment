@@ -21,11 +21,13 @@ const string STOCK_FILE = "../data/stock.txt";
 // ───────────────────────────────
 void showProductReport() {
     vector<Product> products = loadProducts();
-    cout << "\n=== Product Report ===\n";
+    cout << "\n======== Product Report ========\n";
     if (products.empty()) {
         cout << "No product data found.\n";
         return;
     }
+
+    
 
     cout << left << setw(20) << "Product" 
          << setw(15) << "Category"
@@ -57,9 +59,11 @@ void showSalesReport() {
         return;
     }
 
-    map<string, double> dailySales;
-    map<string, double> monthlySales;
+    map<string, double> dailySales, dailyCost, dailyProfit;
+    map<string, double> monthlySales, monthlyCost, monthlyProfit;
+
     string line;
+    double totalSalesAll = 0, totalCostAll = 0, totalProfitAll = 0;
 
     while (getline(file, line)) {
         if (line.empty()) continue;
@@ -69,29 +73,102 @@ void showSalesReport() {
         if (dateStart == string::npos || dateEnd == string::npos) continue;
 
         string date = line.substr(dateStart + 1, dateEnd - dateStart - 1);
-        string dayKey = date;                  // เช่น 2025-10-04
-        string monthKey = date.substr(0, 7);   // เช่น 2025-10
+        string dayKey = date;
+        string monthKey = date.substr(0, 7);
 
+        size_t salePos = line.find("Sale:");
         size_t totalPos = line.find("Total=");
-        if (totalPos != string::npos) {
-            double total = 0;
-            stringstream ss(line.substr(totalPos + 6));
-            ss >> total;
+        if (salePos == string::npos || totalPos == string::npos) continue;
 
-            dailySales[dayKey] += total;
-            monthlySales[monthKey] += total;
+        string itemsPart = line.substr(salePos + 5, totalPos - (salePos + 5));
+
+        stringstream ss(itemsPart);
+        string item;
+        double daySales = 0, dayCost = 0, dayProfit = 0;
+
+        while (getline(ss, item, ',')) {
+            if (item.empty()) continue;
+
+            // ตัวอย่าง: bigRjx5@Sell=10@Cost=5@Profit=25
+            size_t xPos = item.find('x');
+            if (xPos == string::npos) continue;
+
+            string name = item.substr(0, xPos);
+            int qty = 0;
+            double sell = 0, cost = 0, profit = 0;
+
+            try {
+                qty = stoi(item.substr(xPos + 1, item.find('@') - xPos - 1));
+            } catch (...) { qty = 0; }
+
+            size_t sellPos = item.find("Sell=");
+            if (sellPos != string::npos)
+                try { sell = stod(item.substr(sellPos + 5)); } catch (...) {}
+
+            size_t costPos = item.find("Cost=");
+            if (costPos != string::npos)
+                try { cost = stod(item.substr(costPos + 5)); } catch (...) {}
+
+            size_t profitPos = item.find("Profit=");
+            if (profitPos != string::npos)
+                try { profit = stod(item.substr(profitPos + 7)); } catch (...) {}
+            else
+                profit = (sell - cost) * qty;
+
+            daySales += sell * qty;
+            dayCost += cost * qty;
+            dayProfit += profit;
         }
+
+        dailySales[dayKey] += daySales;
+        dailyCost[dayKey] += dayCost;
+        dailyProfit[dayKey] += dayProfit;
+
+        monthlySales[monthKey] += daySales;
+        monthlyCost[monthKey] += dayCost;
+        monthlyProfit[monthKey] += dayProfit;
+
+        totalSalesAll += daySales;
+        totalCostAll += dayCost;
+        totalProfitAll += dayProfit;
     }
 
-    cout << "\n=== Sales Report ===\n";
-    cout << "\n--- By Day ---\n";
-    for (auto &d : dailySales)
-        cout << d.first << " : " << fixed << setprecision(2) << d.second << " THB\n";
+    cout << "\n=== Sales & Profit Report ===\n";
 
-    cout << "\n--- By Month ---\n";
-    for (auto &m : monthlySales)
-        cout << m.first << " : " << fixed << setprecision(2) << m.second << " THB\n";
+    cout << "\n------------------- Summary By Day -------------------\n";
+    cout << left << setw(12) << "Date" 
+         << setw(15) << "Sales(THB)"
+         << setw(15) << "Cost(THB)"
+         << setw(15) << "Profit(THB)" << endl;
+    cout << string(57, '-') << endl;
+    for (auto &d : dailySales) {
+        cout << left << setw(12) << d.first
+             << setw(15) << fixed << setprecision(2) << dailySales[d.first]
+             << setw(15) << dailyCost[d.first]
+             << setw(15) << dailyProfit[d.first] << endl;
+    }
+
+    cout << "\n------------------- Summary By Month -------------------\n";
+    cout << left << setw(12) << "Month" 
+         << setw(15) << "Sales(THB)"
+         << setw(15) << "Cost(THB)"
+         << setw(15) << "Profit(THB)" << endl;
+    cout << string(57, '-') << endl;
+    for (auto &m : monthlySales) {
+        cout << left << setw(12) << m.first
+             << setw(15) << fixed << setprecision(2) << monthlySales[m.first]
+             << setw(15) << monthlyCost[m.first]
+             << setw(15) << monthlyProfit[m.first] << endl;
+    }
+
+    cout << "\n==========================================================\n";
+    cout << "Total Sales Overall : " << fixed << setprecision(2) << totalSalesAll << " THB\n";
+    cout << "Total Cost Overall  : " << fixed << setprecision(2) << totalCostAll << " THB\n";
+    cout << "Total Profit Overall: " << fixed << setprecision(2) << totalProfitAll << " THB\n";
+    cout << "==========================================================\n";
 }
+
+
 
 // ───────────────────────────────
 // แสดงรายงานการเคลื่อนไหวสต็อก
@@ -146,7 +223,7 @@ void reportMenu() {
     int choice;
     do {
         system("cls");
-        cout << "=== REPORT MENU ===\n";
+        cout << "======== REPORT MENU ========\n";
         cout << "1. Product Report\n";
         cout << "2. Sales Report (by Day/Month)\n";
         cout << "3. Stock Movement Report\n";

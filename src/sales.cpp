@@ -14,8 +14,10 @@ const string SALES_FILE = "../data/sales.txt";
 struct SaleItem {
     string name;
     double price;
+    double cost;
     int quantity;
     double subtotal;
+    double profit;
 };
 
 // ─────────────────────────────
@@ -61,12 +63,18 @@ void salesMenu() {
 
     vector<SaleItem> cart;
 
+    // ───────────────────────────────
     // วนลูปเลือกสินค้า
+    // ───────────────────────────────
     while (true) {
         system("cls");
         cout << "\n=== Product List ===\n";
-        cout << left << setw(5) << "No" << setw(20) << "Product" << setw(10) << "Price" << setw(10) << "Status" << endl;
+        cout << left << setw(5) << "No" 
+             << setw(20) << "Product" 
+             << setw(10) << "Price" 
+             << setw(10) << "Status" << endl;
         cout << string(50, '-') << endl;
+
         for (size_t i = 0; i < products.size(); i++) {
             cout << left << setw(5) << (i+1)
                  << setw(20) << products[i].name
@@ -98,8 +106,10 @@ void salesMenu() {
         SaleItem item;
         item.name = p.name;
         item.price = p.sellPrice;
+        item.cost = p.costPrice;          // ✅ เพิ่มราคาทุน
         item.quantity = qty;
         item.subtotal = qty * p.sellPrice;
+        item.profit = qty * (p.sellPrice - p.costPrice); // ✅ คำนวณกำไร
         cart.push_back(item);
 
         cout << "Added to cart: " << qty << " x " << p.name << endl;
@@ -110,13 +120,21 @@ void salesMenu() {
         return;
     }
 
+    // ───────────────────────────────
     // คำนวณราคา
-    double total = 0;
-    for (auto &item : cart) total += item.subtotal;
+    // ───────────────────────────────
+    double total = 0, totalProfit = 0;
+    for (auto &item : cart) {
+        total += item.subtotal;
+        totalProfit += item.profit; // ✅ รวมกำไรทั้งหมด
+    }
+
     double tax = total * 0.07;  // ภาษี 7%
     double net = total + tax;
 
+    // ───────────────────────────────
     // รับเงินลูกค้า
+    // ───────────────────────────────
     double cash;
     do {
         cout << "\nTotal to pay: " << fixed << setprecision(2) << net << endl;
@@ -127,7 +145,9 @@ void salesMenu() {
 
     double change = cash - net;
 
+    // ───────────────────────────────
     // แสดงใบเสร็จ
+    // ───────────────────────────────
     printReceipt(cart, total, tax, net, cash, change);
 
     // ✅ ดึงวันที่ปัจจุบัน
@@ -136,15 +156,30 @@ void salesMenu() {
     char dateStr[20];
     sprintf(dateStr, "%04d-%02d-%02d", 1900 + ltm->tm_year, 1 + ltm->tm_mon, ltm->tm_mday);
 
-    // ✅ บันทึกลง sales.txt พร้อมวันที่
+    // ───────────────────────────────
+    // ✅ บันทึกลง sales.txt พร้อมวันที่ & ราคาทุน
+    // ───────────────────────────────
     ofstream outfile(SALES_FILE, ios::app);
     outfile << "[" << dateStr << "] Sale: ";
+
     for (auto &item : cart) {
-        outfile << item.name << "x" << item.quantity << "@" << item.price << ",";
+        outfile << item.name 
+                << "x" << item.quantity 
+                << "@Sell=" << item.price 
+                << "@Cost=" << item.cost 
+                << "@Profit=" << item.profit 
+                << ",";
     }
-    outfile << " Total=" << total << " Tax=" << tax << " Net=" << net 
-            << " Cash=" << cash << " Change=" << change << "\n";
+
+    outfile << " Total=" << total 
+            << " Tax=" << tax 
+            << " Net=" << net 
+            << " Cash=" << cash 
+            << " Change=" << change 
+            << " ProfitTotal=" << totalProfit 
+            << "\n";
+
     outfile.close();
 
-    cout << "\n Sale recorded successfully on " << dateStr << "!\n";
+    cout << "\nSale recorded successfully on " << dateStr << "!\n";
 }
