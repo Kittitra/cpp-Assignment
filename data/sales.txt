@@ -1,3 +1,4 @@
 [2025-10-05] Sale: bigRjx5@Sell=10@Cost=5@Profit=25, Total=50 Tax=3.5 Net=53.5 Cash=60 Change=6.5 ProfitTotal=25
 [2025-10-05] Sale: bigRjx5@Sell=10@Cost=5@Profit=25, Total=50 Tax=3.5 Net=53.5 Cash=60 Change=6.5 ProfitTotal=25
 [2025-10-05] Sale: cokex3@Sell=10@Cost=7@Profit=9, Total=30 Tax=2.1 Net=32.1 Cash=35 Change=2.9 ProfitTotal=9
+[2025-10-07] Sale: leysx10@Sell=20@Cost=17@Profit=30, Total=200 Tax=14 Net=214 Cash=220 Change=6 ProfitTotal=30

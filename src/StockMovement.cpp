@@ -42,6 +42,14 @@ string currentDate() {
 // ───────────────────────────────
 // อัปเดตจำนวนสินค้าใน products.txt
 // ───────────────────────────────
+#include <iostream>
+#include <vector>
+#include <limits>
+#include "../include/product.h"
+#include "../include/stockMovement.h"
+
+using namespace std;
+
 void updateProductStock(const StockMovement& sm) {
     vector<Product> products = loadProducts();
     bool found = false;
@@ -50,13 +58,11 @@ void updateProductStock(const StockMovement& sm) {
         if (p.name == sm.productName) {
             found = true;
 
-            // ปรับจำนวนสินค้าตาม movement
             if (sm.movementType == "IN") {
                 p.fullUnits += sm.fullUnits;
                 p.loosePieces += sm.loosePieces;
             }
             else if (sm.movementType == "OUT") {
-                // ลบจากหน่วยเต็มก่อน ถ้าไม่พอให้ใช้ loosePieces
                 int totalPieces = p.fullUnits * p.unitSize + p.loosePieces;
                 int removePieces = sm.fullUnits * p.unitSize + sm.loosePieces;
                 totalPieces -= removePieces;
@@ -66,9 +72,10 @@ void updateProductStock(const StockMovement& sm) {
                 p.loosePieces = totalPieces % p.unitSize;
             }
             else if (sm.movementType == "ADJUST") {
-                // ปรับเป็นจำนวนใหม่ตรงๆ
+                // ✅ ปรับเป็นจำนวนใหม่โดยตรง
                 p.fullUnits = sm.fullUnits;
                 p.loosePieces = sm.loosePieces;
+                p.unitSize = sm.unitSize;
             }
 
             // ปรับสถานะสินค้า
@@ -77,11 +84,11 @@ void updateProductStock(const StockMovement& sm) {
         }
     }
 
-    // ถ้าไม่เจอสินค้า และเป็นการรับเข้า (IN) → สร้างสินค้าใหม่
+    // ถ้าไม่เจอสินค้า และเป็นการรับเข้า (IN) → สร้างใหม่
     if (!found && sm.movementType == "IN") {
         Product newP;
         newP.name = sm.productName;
-        newP.category = "Uncategorized";  // หรือให้ user กรอกเพิ่ม
+        newP.category = "Uncategorized";
         newP.costPrice = 0;
         newP.sellPrice = 0;
         newP.fullUnits = sm.fullUnits;
@@ -94,6 +101,8 @@ void updateProductStock(const StockMovement& sm) {
 
     saveProducts(products);
 }
+
+
 
 
 // ───────────────────────────────
@@ -116,34 +125,105 @@ void stockMovementMenu() {
         if (choice == 1 || choice == 2 || choice == 3) {
             StockMovement sm;
             sm.movementType = (choice == 1 ? "IN" : (choice == 2 ? "OUT" : "ADJUST"));
+            vector<Product> products = loadProducts();
 
-            cout << "Product name: ";
-            getline(cin, sm.productName);
+            if (sm.movementType == "ADJUST") {
+                // แสดงรายการสินค้าให้เลือก
+                cout << "\n=== Product List ===\n";
+                for (size_t i = 0; i < products.size(); ++i) {
+                    cout << i + 1 << ". " << products[i].name
+                         << " | FullUnits: " << products[i].fullUnits
+                         << " | Loose: " << products[i].loosePieces
+                         << " | UnitSize: " << products[i].unitSize << endl;
+                }
 
-            cout << "Full units: ";
-            cin >> sm.fullUnits;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "\nSelect product number to adjust: ";
+                int prodIndex;
+                cin >> prodIndex;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            cout << "Loose pieces: ";
-            cin >> sm.loosePieces;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                if (prodIndex < 1 || prodIndex > (int)products.size()) {
+                    cout << "Invalid product number!\n";
+                    cout << "Press Enter to continue...";
+                    cin.get();
+                    continue;
+                }
 
-            cout << "Unit name: ";
-            getline(cin, sm.unitName);
+                Product &p = products[prodIndex - 1];
+                sm.productName = p.name;
 
-            cout << "Pieces per unit: ";
-            cin >> sm.unitSize;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                string input;
 
-            cout << "Remarks: ";
-            getline(cin, sm.remarks);
+                cout << "\nAdjusting product: " << p.name << "\n";
+                cout << "(Press Enter to keep old value)\n";
 
-            sm.date = currentDate();
+                cout << "Full units (" << p.fullUnits << "): ";
+                getline(cin, input);
+                if (!input.empty()) p.fullUnits = stoi(input);
 
-            saveStockMovement(sm);
-            updateProductStock(sm);
+                cout << "Loose pieces (" << p.loosePieces << "): ";
+                getline(cin, input);
+                if (!input.empty()) {
+                    int newLoose = stoi(input);
+                    while (newLoose >= p.unitSize) {
+                        cout << "❌ Invalid: Loose pieces must be less than unit size (" << p.unitSize << ")\n";
+                        cout << "Enter again: ";
+                        getline(cin, input);
+                        if (input.empty()) break; // กด Enter เพื่อยกเลิกการแก้ไข
+                        newLoose = stoi(input);
+                    }
+                    if (!input.empty()) p.loosePieces = newLoose;
+                }
 
-            cout << "Stock movement saved & product stock updated!\n";
+                cout << "Pieces per unit (" << p.unitSize << "): ";
+                getline(cin, input);
+                if (!input.empty()) p.unitSize = stoi(input);
+
+                cout << "Remarks: ";
+                sm.remarks = "none";
+                getline(cin, sm.remarks);
+                
+                sm.fullUnits = p.fullUnits;
+                sm.loosePieces = p.loosePieces;
+                sm.unitSize = p.unitSize;
+                sm.unitName = p.unitName;
+                sm.date = currentDate();
+
+                saveStockMovement(sm);
+                saveProducts(products);
+
+                cout << "\nStock adjusted successfully!\n";
+            }
+            else {
+                // กรณี IN / OUT ใช้แบบเดิม
+                cout << "Product name: ";
+                getline(cin, sm.productName);
+
+                cout << "Full units: ";
+                cin >> sm.fullUnits;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                cout << "Loose pieces: ";
+                cin >> sm.loosePieces;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                cout << "Unit name: ";
+                getline(cin, sm.unitName);
+
+                cout << "Pieces per unit: ";
+                cin >> sm.unitSize;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                cout << "Remarks: ";
+                getline(cin, sm.remarks);
+
+                sm.date = currentDate();
+
+                saveStockMovement(sm);
+                updateProductStock(sm);
+
+                cout << "Stock movement saved & product stock updated!\n";
+            }
         }
         else if (choice == 4) {
             ifstream infile(STOCK_FILE);
@@ -162,28 +242,27 @@ void stockMovementMenu() {
             int count = 1;
             while (getline(infile, line)) {
                 if (line.empty()) continue;
-                    // แยกข้อมูลโดยใช้ | เป็นตัวแบ่ง
-                    stringstream ss(line);
-                    string productName, movementType, fullUnitsStr, loosePiecesStr, unitName, unitSizeStr, remarks, date;
-                    getline(ss, productName, '|');
-                    getline(ss, movementType, '|');
-                    getline(ss, fullUnitsStr, '|');
-                    getline(ss, loosePiecesStr, '|');
-                    getline(ss, unitName, '|');
-                    getline(ss, unitSizeStr, '|'); // เราอาจไม่ใช้ตอนแสดงก็ได้
-                    getline(ss, remarks, '|');
-                    getline(ss, date, '|');
+                stringstream ss(line);
+                string productName, movementType, fullUnitsStr, loosePiecesStr, unitName, unitSizeStr, remarks, date;
+                getline(ss, productName, '|');
+                getline(ss, movementType, '|');
+                getline(ss, fullUnitsStr, '|');
+                getline(ss, loosePiecesStr, '|');
+                getline(ss, unitName, '|');
+                getline(ss, unitSizeStr, '|');
+                getline(ss, remarks, '|');
+                getline(ss, date, '|');
 
-                    cout << left << setw(5) << count
-                            << setw(12) << date
-                            << setw(8) << movementType
-                            << setw(20) << productName
-                            << setw(8) << fullUnitsStr
-                            << setw(8) << loosePiecesStr
-                            << setw(8) << unitName
-                            << setw(15) << remarks
-                            << endl;
-                    count++;
+                cout << left << setw(5) << count
+                        << setw(12) << date
+                        << setw(8) << movementType
+                        << setw(20) << productName
+                        << setw(8) << fullUnitsStr
+                        << setw(8) << loosePiecesStr
+                        << setw(8) << unitName
+                        << setw(15) << remarks
+                        << endl;
+                count++;
             }
         }
         else if (choice == 0) {
@@ -194,9 +273,11 @@ void stockMovementMenu() {
         }
 
         if (choice != 0) {
-            cout << "Press Enter to continue...";
+            cout << "\nPress Enter to continue...";
             cin.get();
         }
 
     } while (choice != 0);
 }
+
+

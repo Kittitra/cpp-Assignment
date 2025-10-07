@@ -3,3 +3,11 @@ bigRj|OUT|0|0|pack|5|none|2025-10-03
 bigRj|IN|2|0|pack|12|none|2025-10-03
 bigRj|OUT|0|5|pack|10|none|2025-10-03
 mama|IN|20|0|box|7|none|2025-10-03
+0|ADJUST|0|0|0|0|0|2025-10-07
+bigRj|ADJUST|1|0|pack|10|none|2025-10-07
+|ADJUST|0|0|0|0|0|2025-10-07
+coke|ADJUST|10|13|pack|12|non|2025-10-07
+coke|ADJUST|10|13|pack|12||2025-10-07
+coke|ADJUST|10|0|pack|12||2025-10-07
+coke|ADJUST|10|1|pack|12|non|2025-10-07
+coke|ADJUST|10|1|pack|12||2025-10-07

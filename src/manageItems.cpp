@@ -182,8 +182,8 @@ void editProduct() {
         return;
     }
 
-    Product &p = products[index-1];
-    cout << "Editing " << p.name << endl;
+    Product &p = products[index - 1];
+    cout << "\nEditing product: " << p.name << endl;
 
     string temp;
 
@@ -197,27 +197,21 @@ void editProduct() {
 
     cout << "Enter new cost price (" << p.costPrice << "): ";
     getline(cin, temp);
-    if (!temp.empty()) p.costPrice = stod(temp);
+    if (!temp.empty()) {
+        try { p.costPrice = stod(temp); }
+        catch (...) { cout << "Invalid input. Keeping old value.\n"; }
+    }
 
     cout << "Enter new sell price (" << p.sellPrice << "): ";
     getline(cin, temp);
-    if (!temp.empty()) p.sellPrice = stod(temp);
-
-    cout << "Enter new number of full units (" << p.fullUnits << "): ";
-    getline(cin, temp);
-    if (!temp.empty()) p.fullUnits = stoi(temp);
-
-    cout << "Enter new loose pieces (" << p.loosePieces << "): ";
-    getline(cin, temp);
-    if (!temp.empty()) p.loosePieces = stoi(temp);
+    if (!temp.empty()) {
+        try { p.sellPrice = stod(temp); }
+        catch (...) { cout << "Invalid input. Keeping old value.\n"; }
+    }
 
     cout << "Enter new unit name (" << p.unitName << "): ";
     getline(cin, temp);
     if (!temp.empty()) p.unitName = temp;
-
-    cout << "Enter new unit size (pieces per unit) (" << p.unitSize << "): ";
-    getline(cin, temp);
-    if (!temp.empty()) p.unitSize = stoi(temp);
 
     cout << "Enter new status (" << p.status << ") [1=Available, 0=Unavailable]: ";
     getline(cin, temp);
@@ -227,8 +221,9 @@ void editProduct() {
     }
 
     saveProducts(products);
-    cout << "Product updated successfully.\n";
+    cout << "\n Product information updated successfully (stock not affected).\n";
 }
+
 
 
 // ──────────────────────────────

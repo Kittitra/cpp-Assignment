@@ -6,6 +6,7 @@
 #include "../include/manageCategory.h"
 #include "../include/manageProductMenu.h"
 #include "../include/StockMovement.h"
+#include "../include/user.h"
 
 using namespace std;
 
@@ -17,6 +18,17 @@ void showAdminMenu() {
     cout << "3. Stock Movements\n";
     cout << "4. Sales\n";
     cout << "5. Reports\n";
+    cout << "6. AddUser\n";
+    cout << "0. Logout / Return to Main Menu\n";
+    cout << "==================\n";
+}
+
+void showStaffMenu() {
+    system("cls");
+    cout << "=== Staff Menu ===\n";
+    cout << "1. Stock Movements\n";
+    cout << "2. Sales\n";
+    cout << "3. Reports\n";
     cout << "0. Logout / Return to Main Menu\n";
     cout << "==================\n";
 }
@@ -46,8 +58,9 @@ int Login() {
             cout << "Press Enter to continue...";
             cin.get();
 
-            // If role is admin, show admin menu
-                int choice;
+            int choice;
+
+            if (acc.role == "admin") {
                 do {
                     showAdminMenu();
                     cout << "Choose option: ";
@@ -55,21 +68,12 @@ int Login() {
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                     switch(choice) {
-                        case 1: cout << "Selected: Manage Product Categories\n"; 
-                            manageCategory();
-                        break;
-                        case 2: cout << "Selected: Manage Products\n"; 
-                            manageProductsMenu();
-                        break;
-                        case 3: cout << "Selected: Stock Movements\n"; 
-                            stockMovementMenu();
-                        break;
-                        case 4: cout << "Selected: Sales\n"; 
-                            salesMenu();
-                        break;
-                        case 5: cout << "Selected: Reports\n"; 
-                            reportMenu();
-                        break;
+                        case 1: manageCategory(); break;
+                        case 2: manageProductsMenu(); break;
+                        case 3: stockMovementMenu(); break;
+                        case 4: salesMenu(); break;
+                        case 5: reportMenu(acc.role); break;
+                        case 6: addUser(); break;
                         case 0: cout << "Logging out...\n"; break;
                         default: cout << "Invalid option\n";
                     }
@@ -79,8 +83,30 @@ int Login() {
                         cin.get();
                     }
                 } while(choice != 0);
+            }
+            else if (acc.role == "staff") {
+                do {
+                    showStaffMenu();
+                    cout << "Choose option: ";
+                    cin >> choice;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            break; // exit login loop
+                    switch(choice) {
+                        case 1: stockMovementMenu(); break;
+                        case 2: salesMenu(); break;
+                        case 3: reportMenu(acc.role); break;
+                        case 0: cout << "Logging out...\n"; break;
+                        default: cout << "Invalid option\n";
+                    }
+
+                    if (choice != 0) {
+                        cout << "Press Enter to continue...";
+                        cin.get();
+                    }
+                } while(choice != 0);
+            }
+
+            break; // ออกจาก while login
         } else {
             cout << "Login failed! Press Enter to retry...";
             cin.get();

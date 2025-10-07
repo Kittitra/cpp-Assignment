@@ -1,2 +1,4 @@
 bob:1234:admin
 anna:5555:staff
+ali:4444:staff
+james:9999:admin

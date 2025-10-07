@@ -15,7 +15,7 @@ using namespace std;
 const string PRODUCTS_FILE = "../data/products.txt";
 const string SALES_FILE = "../data/sales.txt";
 const string STOCK_FILE = "../data/stock.txt";
-
+const string USERS_FILE = "../data/accounts.txt";
 // ───────────────────────────────
 // แสดงรายงานสินค้า
 // ───────────────────────────────
@@ -216,10 +216,65 @@ void showStockMovementReport() {
     }
 }
 
+void showLoginHistory() {
+    ifstream file("../data/login_history.txt"); // สมมติไฟล์เก็บ login
+    if (!file) {
+        cout << "No login history found.\n";
+        return;
+    }
+
+    cout << "\n=== Login History ===\n";
+    string line;
+    while (getline(file, line)) {
+        if (!line.empty()) {
+            cout << line << endl;
+        }
+    }
+}
+
+void showUserList() {
+    ifstream infile(USERS_FILE);
+    if (!infile.is_open()) {
+        cout << "Cannot open user file!\n";
+        return;
+    }
+
+    cout << "\n===== User List =====\n";
+    cout << left << setw(20) << "Username" 
+         << setw(15) << "Role" << endl;
+    cout << string(35, '-') << endl;
+
+    string line;
+    bool hasData = false;
+
+    while (getline(infile, line)) {
+        if (line.empty()) continue;
+
+        stringstream ss(line);
+        string username, password, role;
+
+        getline(ss, username, ':');
+        getline(ss, password, ':');
+        getline(ss, role, ':');
+
+        if (!username.empty() && !role.empty()) {
+            cout << left << setw(20) << username
+                 << setw(15) << role << endl;
+            hasData = true;
+        }
+    }
+
+    if (!hasData) {
+        cout << "No users found.\n";
+    }
+
+    infile.close();
+}
+
 // ───────────────────────────────
 // เมนูรายงานหลัก
 // ───────────────────────────────
-void reportMenu() {
+void reportMenu(const string &userRole) {
     int choice;
     do {
         system("cls");
@@ -227,17 +282,30 @@ void reportMenu() {
         cout << "1. Product Report\n";
         cout << "2. Sales Report (by Day/Month)\n";
         cout << "3. Stock Movement Report\n";
+        int loginOption = 0;
+        if (userRole == "admin") {
+            loginOption = 4;
+            cout << "4. Login History\n";
+            cout << "5. User List (Admin & Staff)\n";
+        }
         cout << "0. Back to Main Menu\n";
         cout << "------------------------------\n";
         cout << "Enter choice: ";
         cin >> choice;
-
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         switch (choice) {
             case 1: showProductReport(); break;
             case 2: showSalesReport(); break;
             case 3: showStockMovementReport(); break;
+            case 4:
+                if (userRole == "admin") showLoginHistory();
+                else cout << "Invalid option!\n";
+                break;
+            case 5: 
+                if (userRole == "admin") showUserList();
+                else cout << "Invalid option!\n";
+                break;
             case 0: cout << "Returning to main menu...\n"; break;
             default: cout << "Invalid option!\n";
         }
