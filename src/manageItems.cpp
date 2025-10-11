@@ -88,7 +88,7 @@ void saveProducts(const vector<Product>& products) {
 // ──────────────────────────────
 // แสดงสินค้า
 // ──────────────────────────────
-void showProducts() {
+void showshowProducts() {
     vector<Product> products = loadProducts();
     cout << "\n=== Product List ===\n";
 
@@ -221,7 +221,7 @@ void editProduct() {
     }
 
     saveProducts(products);
-    cout << "\n Product information updated successfully (stock not affected).\n";
+    cout << "\n Product information updated successfully .\n";
 }
 
 
@@ -274,7 +274,7 @@ void manageProductsMenu() {
             case 2: editProduct(); break;
             case 3: deleteProduct(); break;
             case 4: showProducts(); break;
-            case 0: cout << "Back to Admin Menu...\n"; break;
+            case 0: cout << "Back to Menu...\n"; break;
             default: cout << "Invalid option.\n";
         }
 

@@ -112,7 +112,7 @@ void deleteCategory() {
 }
 
 // เมนูย่อย Manage Products
-void manageCategory() {
+void manageCategoryMenu() {
     int choice;
     do {
         system("cls");
@@ -131,7 +131,7 @@ void manageCategory() {
             case 2: editCategory(); break;
             case 3: deleteCategory(); break;
             case 4: showCategories(); break;
-            case 0: cout << "Back to Admin Menu...\n"; break;
+            case 0: cout << "Back to Menu...\n"; break;
             default: cout << "Invalid option.\n";
         }
 

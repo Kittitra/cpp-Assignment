@@ -12,6 +12,9 @@ void deleteProduct();
 void showProducts();
 void salesMenu();
 void reportMenu(const string &userRole);
+int Login();
+void showAdminMenu(string role);
+void showStaffMenu(string role);
 
 // ฟังก์ชัน load/save product สำหรับใช้ใน StockMovement
 std::vector<Product> loadProducts();

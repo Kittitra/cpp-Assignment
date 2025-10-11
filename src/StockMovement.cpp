@@ -266,7 +266,7 @@ void stockMovementMenu() {
             }
         }
         else if (choice == 0) {
-            cout << "Back to Admin Menu...\n";
+            cout << "Back to Menu...\n";
         }
         else {
             cout << "Invalid option!\n";

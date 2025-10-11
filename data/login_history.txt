@@ -88,3 +88,11 @@
 [2025-10-07 19:29:26] User: bob (Role: admin) logged in.
 [2025-10-07 19:30:58] User: bob (Role: admin) logged in.
 [2025-10-07 19:47:48] User: bob (Role: admin) logged in.
+[2025-10-08 17:53:53] User: bob (Role: admin) logged in.
+[2025-10-08 18:55:31] User: bob (Role: admin) logged in.
+[2025-10-08 20:27:15] User: bob (Role: admin) logged in.
+[2025-10-08 20:50:54] User: bob (Role: admin) logged in.
+[2025-10-08 20:51:05] User: anna (Role: staff) logged in.
+[2025-10-08 21:17:31] User: bob (Role: admin) logged in.
+[2025-10-08 21:27:33] User: bob (Role: admin) logged in.
+[2025-10-08 23:06:17] User: bob (Role: admin) logged in.
