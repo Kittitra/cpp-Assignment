@@ -11,3 +11,12 @@ coke|ADJUST|10|13|pack|12||2025-10-07
 coke|ADJUST|10|0|pack|12||2025-10-07
 coke|ADJUST|10|1|pack|12|non|2025-10-07
 coke|ADJUST|10|1|pack|12||2025-10-07
+lays|IN|10|0|pack|12||2025-10-18
+lay|IN|3|0|pack|12||2025-10-18
+lays|IN|3|0|pack|12||2025-10-18
+lays|IN|3|0|pack|12||2025-10-18
+kkkj|OUT|0|0|0|0||2025-10-18
+lays|OUT|3|0|pack|12||2025-10-18
+lays|IN|2|0|pack|12||2025-10-18
+lays|OUT|4|0|pack|12||2025-10-18
+bigRj|ADJUST|1|0|pack|12||2025-10-18

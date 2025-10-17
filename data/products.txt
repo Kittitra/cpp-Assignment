@@ -1,4 +1,4 @@
-bigRj|soda|5|10|10|12|0|pack|Available
+bigRj|soda|5|10|1|12|0|pack|Available
 coke|soda|7|10|10|12|1|pack|Available
-mama|Uncategorized|0|0|20|7|0|box|Unavailable
-leys|chips|17|20|10|10|0|box|Available
+mama|noodles|5|7|20|7|0|box|Available
+lays|chips|20|30|19|12|0|pack|Available

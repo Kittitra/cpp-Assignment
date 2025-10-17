@@ -31,21 +31,19 @@ int main() {
     return 0;
 }
 
-void showAdminMenu(string role) {
-    system("cls");
-    cout << "=== Admin Menu ===\n";
-    cout << "1. Manage Product Categories\n";
-    cout << "2. Manage Products\n";
-    cout << "3. Stock Movements\n";
-    cout << "4. Sales\n";
-    cout << "5. Reports\n";
-    cout << "6. AddUser\n";
-    cout << "0. Logout / Return to Main Menu\n";
-    cout << "==================\n";
-
+bool showAdminMenu(string role) {
     int choice;
-
     do {
+        system("cls");
+        cout << "=== Admin Menu ===\n";
+        cout << "1. Manage Product Categories\n";
+        cout << "2. Manage Products\n";
+        cout << "3. Stock Movements\n";
+        cout << "4. Sales\n";
+        cout << "5. Reports\n";
+        cout << "6. AddUser\n";
+        cout << "0. Logout\n";
+        cout << "==================\n";
         // showAdminMenu();
         cout << "Choose option: ";
         cin >> choice;
@@ -58,7 +56,9 @@ void showAdminMenu(string role) {
             case 4: salesMenu(); break;
             case 5: reportMenu(role); break;
             case 6: addUser(); break;
-            case 0: cout << "Logging out...\n"; break;
+            case 0: cout << "Logging out...\n"; 
+                return true;
+                break;
             default: cout << "Invalid option\n";
         }
 
@@ -67,18 +67,19 @@ void showAdminMenu(string role) {
             cin.get();
         }
     } while(choice != 0);
+    return false;
 }
 
-void showStaffMenu(string role) {
-    system("cls");
-    cout << "=== Staff Menu ===\n";
-    cout << "1. Stock Movements\n";
-    cout << "2. Sales\n";
-    cout << "3. Reports\n";
-    cout << "0. Logout / Return to Main Menu\n";
-    cout << "==================\n";
+bool showStaffMenu(string role) {
     int choice;
     do {
+        system("cls");
+        cout << "=== Staff Menu ===\n";
+        cout << "1. Stock Movements\n";
+        cout << "2. Sales\n";
+        cout << "3. Reports\n";
+        cout << "0. Logout\n";
+        cout << "==================\n";
         // showStaffMenu();
         cout << "Choose option: ";
         cin >> choice;
@@ -88,7 +89,10 @@ void showStaffMenu(string role) {
             case 1: stockMovementMenu(); break;
             case 2: salesMenu(); break;
             case 3: reportMenu(role); break;
-            case 0: cout << "Logging out...\n"; break;
+            case 0: 
+                cout << "Logging out...\n"; 
+                return true;
+                break;
             default: cout << "Invalid option\n";
         }
 
@@ -97,4 +101,5 @@ void showStaffMenu(string role) {
             cin.get();
         }
     } while(choice != 0);
+    return false;
 }

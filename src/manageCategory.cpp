@@ -121,7 +121,7 @@ void manageCategoryMenu() {
         cout << "2. Edit Category\n";
         cout << "3. Delete Category\n";
         cout << "4. Show All Categories\n";
-        cout << "0. Back to Admin Menu\n";
+        cout << "0. Back to Menu\n";
         cout << "Choose option: ";
         cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');

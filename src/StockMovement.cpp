@@ -117,7 +117,7 @@ void stockMovementMenu() {
         cout << "2. Issue Stock (OUT)\n";
         cout << "3. Adjust Stock\n";
         cout << "4. View Stock Movements\n";
-        cout << "0. Back to Admin Menu\n";
+        cout << "0. Back to Menu\n";
         cout << "Choose: ";
         cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -199,6 +199,30 @@ void stockMovementMenu() {
                 cout << "Product name: ";
                 getline(cin, sm.productName);
 
+                vector<Product> products = loadProducts();
+                bool productExists = false;
+                Product existingProduct;
+
+                for (auto &p : products) {
+                    if (p.name == sm.productName) {
+                        productExists = true;
+                        existingProduct = p;
+                        break;
+                    }
+                }
+
+                if (sm.movementType == "OUT" && !productExists) {
+                    cout << "Product name not found.\n";
+                    cout << "Press Enter to continue...";
+                    cin.get();
+                    continue;
+                }
+
+                if (productExists) {
+                    sm.unitName = existingProduct.unitName;
+                    sm.unitSize = existingProduct.unitSize;
+                }
+
                 cout << "Full units: ";
                 cin >> sm.fullUnits;
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -207,12 +231,21 @@ void stockMovementMenu() {
                 cin >> sm.loosePieces;
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                cout << "Unit name: ";
-                getline(cin, sm.unitName);
 
-                cout << "Pieces per unit: ";
-                cin >> sm.unitSize;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                if (sm.movementType == "IN" && !productExists) {
+                    cout << "Unit name: ";
+                    getline(cin, sm.unitName);
+
+                    cout << "Pieces per unit: ";
+                    cin >> sm.unitSize;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                } 
+                else if (sm.movementType == "IN" && productExists) {
+                    cout << "(Existing product detected — using previous unit info)\n";
+                    cout << "Using unit: " << sm.unitName
+                        << " | Pieces per unit: " << sm.unitSize << endl;
+                }
 
                 cout << "Remarks: ";
                 getline(cin, sm.remarks);

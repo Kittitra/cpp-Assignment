@@ -88,7 +88,7 @@ void saveProducts(const vector<Product>& products) {
 // ──────────────────────────────
 // แสดงสินค้า
 // ──────────────────────────────
-void showshowProducts() {
+void showProducts() {
     vector<Product> products = loadProducts();
     cout << "\n=== Product List ===\n";
 
@@ -255,7 +255,7 @@ void deleteProduct() {
 // ──────────────────────────────
 // เมนูหลัก Manage Products
 // ──────────────────────────────
-void manageProductsMenu() {
+bool manageProductsMenu() {
     int choice;
     do {
         system("cls");
@@ -264,7 +264,7 @@ void manageProductsMenu() {
         cout << "2. Edit Product\n";
         cout << "3. Delete Product\n";
         cout << "4. Show All Products\n";
-        cout << "0. Back to Admin Menu\n";
+        cout << "0. Back to Menu\n";
         cout << "Choose option: ";
         cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -274,7 +274,10 @@ void manageProductsMenu() {
             case 2: editProduct(); break;
             case 3: deleteProduct(); break;
             case 4: showProducts(); break;
-            case 0: cout << "Back to Menu...\n"; break;
+            case 0: 
+                cout << "Back to Menu...\n"; 
+                return true;
+            break;
             default: cout << "Invalid option.\n";
         }
 
@@ -284,4 +287,6 @@ void manageProductsMenu() {
         }
 
     } while (choice != 0);
+
+    return false;
 }
